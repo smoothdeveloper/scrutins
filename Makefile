@@ -13,7 +13,7 @@ maps: communes.xml
 
 communes.xml:
 	python get_election_data.py
-	basex -q "let \$file := \"communes.json\" return json-to-xml(file:read-text(\$file))" > communes.xml
+	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
 
 clean:
 	rm -rf communes.xml
