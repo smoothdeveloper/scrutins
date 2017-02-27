@@ -177,6 +177,4 @@ for insee,commune in communes.iteritems():
 
     communes[insee]["NONISTES_2007"] = communes[insee]["NONISTES_DROITE_PRES_2007"] + communes[insee]["NONISTES_GAUCHE_PRES_2007"]
 
-    print insee
-
 open("communes.json", 'w').write(json.dumps(communes, indent=4))
