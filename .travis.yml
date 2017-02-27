@@ -11,7 +11,10 @@ addons:
     - libsaxonb-java
     - inkscape
     - default-jre
-    - basex
+
+install:
+    - wget http://files.basex.org/releases/8.6.1/BaseX861.zip && unzip BaseX861.zip && rm BaseX861.zip
+    - export PATH=$PATH:$PWD/basex/bin
 
 script: make maps && tar czvf output.tar.gz output
 
