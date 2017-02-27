@@ -1,0 +1,30 @@
+sudo: false
+
+language: python
+
+cache: apt
+
+addons:
+  apt:
+    packages:
+    - libsaxonb-java
+    - inkscape
+    - default-jre
+    - basex
+
+script: make maps && tar czvf output.tar.gz output
+
+deploy:
+    provider: releases
+    api_key: "$GH_TOKEN"
+    file: "output.tar.gz"
+    skip_cleanup: true
+    on:
+      tags: true
+
+notifications:
+  email:
+    recipients:
+      - lucas.gautheron@gmail.com
+    on_success: change # default: change
+on_failure: always
