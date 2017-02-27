@@ -26,9 +26,16 @@
 
     <xsl:template match="svg:polygon">
        <xsl:variable name="insee" select="substring-before(./@id, ' ')" />
-       <xsl:variable name="red" select="$communes//fn:map[@key=$insee]/fn:number[@key='HOLL_PRES']" />
+       <xsl:variable name="red" select="$communes//fn:map[@key=$insee]/fn:number[@key='HOLL_PRES_2012']" />
         <xsl:copy>
-            <xsl:attribute name="fill">rgb(255, <xsl:value-of select="255-round(255 * $red div 100)" />, <xsl:value-of select="255-round(255 * $red div 100)" />)</xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="$red">
+              <xsl:attribute name="fill">rgb(255, <xsl:value-of select="255-round(255 * $red div 100)" />, <xsl:value-of select="255-round(255 * $red div 100)" />)</xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="fill">rgb(100, 100, 100)</xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
           <xsl:apply-templates select="@*|node()" />
         </xsl:copy>
     </xsl:template>
