@@ -93,6 +93,32 @@ with open('data/pres_2012.csv', 'rb') as csvfile:
 
         #print insee, dpt
 for insee,commune in communes.iteritems():
+    if "OUI_2005" in communes[insee] and communes[insee]["exprimes_2005"] > 0:
+        communes[insee]["OUI_TCE"] = 100. * communes[insee]["OUI_2005"]/communes[insee]["exprimes_2005"]
+    else:
+        communes[insee]["OUI_TCE"] = 0
+
+    communes[insee]["NON_TCE"] = 100-communes[insee]["OUI_TCE"]
+
+    candidats_2012 = ["LEPE", "SARK", "CHEM", "BAYR", "ARTH", "POUT", "MELE", "DUPO", "HOLL", "JOLY"]
+    nonistes_droite = [ "LEPE", "DUPO" ]
+    nonistes_gauche = [ "MELE", "ARTH", "POUT"]
+
+    for c in candidats_2012:
+        if c + "_2012" in communes[insee] and communes[insee]["exprimes_2012"] > 0:
+            communes[insee][c + "_PRES"] = 100. * communes[insee][c + "_2012"]/communes[insee]["exprimes_2012"]
+        else:
+            communes[insee][c + "_PRES"] = 0
+
+    communes[insee]["NONISTES_DROITE_PRES"] = 0
+    for c in nonistes_droite:
+        communes[insee]["NONISTES_DROITE_PRES"] = communes[insee]["NONISTES_DROITE_PRES"] + communes[insee][c + "_PRES"]
+
+    communes[insee]["NONISTES_GAUCHE_PRES"] = 0
+    for c in nonistes_gauche:
+        communes[insee]["NONISTES_GAUCHE_PRES"] = communes[insee]["NONISTES_GAUCHE_PRES"] + communes[insee][c + "_PRES"]
+
+    communes[insee]["NONISTES"] = communes[insee]["NONISTES_DROITE_PRES"] + communes[insee]["NONISTES_GAUCHE_PRES"]
     print insee
 
 open("communes.json", 'w').write(json.dumps(communes, indent=4))
