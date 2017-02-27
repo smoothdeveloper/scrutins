@@ -4,4 +4,5 @@
 
 #basex -q "let \$file := \"communes.json\" return json-to-xml(file:read-text(\$file))" > communes.xml
 
-saxonb-xslt -s:maps/communes.svg -xsl:processors/non_2005.xsl -o:maps/non_2005.svg -ext:on
+#saxonb-xslt -s:maps/communes.svg -xsl:processors/non_2005.xsl -o:maps/non_2005.svg -ext:on
+saxonb-xslt -s:maps/communes.svg -xsl:processors/hollande.xsl -o:maps/hollande.svg -ext:on
