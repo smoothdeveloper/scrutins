@@ -21,3 +21,5 @@ sudo apt-get install libsaxonb-java basex inkscape
 ```
 make maps
 ```
+
+```make clean``` supprime les fichiers temporaires.
