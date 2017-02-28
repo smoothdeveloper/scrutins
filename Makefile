@@ -8,7 +8,7 @@ maps: communes.xml
 	saxonb-xslt -s:maps/communes.svg -xsl:processors/hollande.xsl -o:output/hollande.svg -ext:on
 
 	for f in output/*.svg; do \
-		inkscape -f $$f -e "$f$.png"; \
+		inkscape -f $$f -e "$$f.png"; \
 	done
 
 communes.xml:
