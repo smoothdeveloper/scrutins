@@ -3,6 +3,8 @@ import urllib
 import os.path
 import shutil
 import json
+from json import encoder
+encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 
 def download_page(url, destination):
     if os.path.isfile(destination):
@@ -176,5 +178,9 @@ for insee,commune in communes.iteritems():
         communes[insee]["NONISTES_GAUCHE_PRES_2007"] = communes[insee]["NONISTES_GAUCHE_PRES_2007"] + communes[insee][c + "_PRES_2007"]
 
     communes[insee]["NONISTES_2007"] = communes[insee]["NONISTES_DROITE_PRES_2007"] + communes[insee]["NONISTES_GAUCHE_PRES_2007"]
+
+    for k, v in communes[insee].items():
+        if not type(v) is float:
+            del communes[insee][k]
 
 open("communes.json", 'w').write(json.dumps(communes, indent=4))

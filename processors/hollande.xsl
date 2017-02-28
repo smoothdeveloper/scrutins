@@ -16,7 +16,7 @@
     exclude-result-prefixes="xs doc">
     <xsl:output method="xml" indent="yes"/>
 
-    <xsl:variable name="communes" select="document('../communes.xml')"/>
+    <xsl:variable name="communes" select="document('../communes.xml')/fn:map"/>
 
     <xsl:template match="@*|node()">
         <xsl:copy>
@@ -26,7 +26,7 @@
 
     <xsl:template match="svg:polygon">
        <xsl:variable name="insee" select="substring-before(./@id, ' ')" />
-       <xsl:variable name="red" select="$communes//fn:map[@key=$insee]/fn:number[@key='HOLL_PRES_2012']" />
+       <xsl:variable name="red" select="$communes/fn:map[@key=$insee]/fn:number[@key='HOLL_PRES_2012']" />
         <xsl:copy>
           <xsl:choose>
             <xsl:when test="$red">
