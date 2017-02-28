@@ -18,6 +18,10 @@ install:
 
 script: make maps && tar czvf output.tar.gz output
 
+cache:
+  directories:
+    - $PWD/data
+
 deploy:
     provider: releases
     api_key: "$GH_TOKEN"

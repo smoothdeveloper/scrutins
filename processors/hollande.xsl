@@ -16,7 +16,7 @@
     exclude-result-prefixes="xs doc">
     <xsl:output method="xml" indent="yes"/>
 
-    <xsl:param name="communes" select="document('../communes.xml')"/>
+    <xsl:variable name="communes" select="document('../communes.xml')"/>
 
     <xsl:template match="@*|node()">
         <xsl:copy>
