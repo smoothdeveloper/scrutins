@@ -1,7 +1,15 @@
 # L'objectif
 
 L'objectif est de réaliser une cartographie des communes ou bureaux de vote où la population est susceptible d'être intéressée par notre discours.
-Il faut idéalement identifier les transferts suivants :
+Le premier objectif est de générer de compiler les données +suivante+s :
+ * présidentielles 2007
+ * présidentielles 2012
+ * législatives 2012
+ * européennes également
+
+En exploitant les données par bureau de vote.
+
+Il faudra ensuite idéalement identifier les transferts suivants :
  * PS -> PG
  * PS -> FN
  * PS -> abstention
