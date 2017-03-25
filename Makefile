@@ -26,18 +26,24 @@ all: download maps
 
 maps: output/non_2005.png output/hollande.png
 
+$(PNG_FILES) $(SVG_FILES): | output
+
 $(PNG_FILES): %.png: %.svg
 	inkscape -f $< -e "$@"
 
 $(SVG_FILES): output/%.svg: processors/%.xsl maps/communes.svg communes.xml
-	mkdir -p output
 	saxonb-xslt -s:maps/communes.svg -xsl:$< -o:$@ -ext:on
+
+output:
+	mkdir output
 
 communes.xml: communes.json
 	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
 
 communes.json: $(DATA_FILES)
 	python get_election_data.py
+
+$(DATA_FILES): | data
 
 $(DATA_FILES): data/%.csv: raw/%.csv
 	cp $< $@
@@ -46,6 +52,9 @@ $(DATA_FILES): data/%.csv: raw/%.csv
 data/2005.csv: raw/2005.csv
 	# les numeros de bureau de vote de Caen ont un probleme
 	sed 's/Caen;\([0-9]\{2\}\);\([0-9]\);/Caen;\1\2;/' $< > $@
+
+data:
+	mkdir data
 
 $(RAW_FILES): download
 
