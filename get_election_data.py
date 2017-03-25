@@ -1,186 +1,122 @@
-import csv
-import urllib
-import os.path
-import shutil
+#!/usr/bin/env python
+# coding: utf8
+
+from __future__ import unicode_literals
+
+import pandas as pd
 import json
 from json import encoder
+
 encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 
-def download_page(url, destination):
-    if os.path.isfile(destination):
-        return
 
-    file = urllib.URLopener()
-    file.retrieve(url, destination)
+def calculer(df):
+    stats_index = ['departement', 'commune_code', 'tour']
+    choix_index = stats_index + ['choix']
 
-def fix_csv(file, original_delim, desired_delim):
-    newLogFile = open("tmp", 'w')
-    textFile = open(file, 'rb')
-    for row in textFile:
-        row.replace(original_delim, desired_delim)
-        newLogFile.write(row)
+    # on vérifie que le nombre d'inscrits, votants et exprimes est le même à chaque ligne d'un même bureau
+    verif_unique = df.groupby(stats_index + ['bureau']).agg({
+        'inscrits': 'nunique',
+        'votants': 'nunique',
+        'exprimes': 'nunique',
+    })
+    assert (verif_unique == 1).all().all()
 
-    shutil.copy2("tmp", file)
+    stats = (
+        df
+            # on a vérifié que les stats étaient les mêmes pour chaque bureau, donc on déduplique en prenant
+            # la première valeur
+            .groupby(stats_index + ['bureau']).agg({
+            'inscrits': 'first',
+            'votants': 'first',
+            'exprimes': 'first',
+        })
+            # puis on somme par commune
+            .groupby(level=stats_index).sum()
+            # puis on dépile le numéro de tour et on le met en premier index de colonne
+            .unstack(['tour']).swaplevel(0, 1, axis=1).sortlevel(axis=1)
+    )
+    stats.columns = stats.columns.set_names(['tour', 'statistique'])
 
-download_page("https://www.data.gouv.fr/s/resources/election-presidentielle-2012-resultats-par-bureaux-de-vote-1/20150925-102751/PR12_Bvot_T1T2.txt", "data/pres_2012.csv")
-download_page("https://www.data.gouv.fr/s/resources/election-presidentielle-2007-resultats-par-bureaux-de-vote/20151001-154056/PR07_Bvot_T1T2.txt", "data/pres_2007.csv")
-download_page("https://www.data.gouv.fr/s/resources/referendum-de-2005-resultats-par-bureaux-de-vote/20150925-112918/RF05_BVot.txt", "data/2005.csv")
+    choix = df.groupby(choix_index)['voix'].sum().unstack(['tour', 'choix'])
 
-fix_csv("data/2005.csv", ",", ";")
-fix_csv("data/pres_2012.csv", ",", ";")
-fix_csv("data/pres_2007.csv", ",", ";")
+    # on vérifie que le nombre de suffrages exprimés est égal à la somme des votes pour chaque choix, et ce pour chaque
+    # tour de l'élection
+    assert (
+       stats.swaplevel(0, 1, axis=1)['exprimes'] == choix.sum(axis=1, level=0)
+    ).all().all()
 
-def init_res():
-    c = {}
-    c["exprimes_2005"] = 0
-    c["votants_2005"] = 0
-    c["abstention_2005"] = 0
-    c["inscrits_2005"] = 0
-    c["exprimes_2012"] = 0
-    c["votants_2012"] = 0
-    c["inscrits_2012"] = 0
-    c["exprimes_2007"] = 0
-    c["votants_2007"] = 0
-    c["inscrits_2007"] = 0
-    return c
-
-bureaux = []
-communes = {}
-
-with open('data/2005.csv', 'rb') as csvfile:
-    reader = csv.reader(csvfile, delimiter=';', quotechar='|')
-    for row in reader:
-        if len(row) != 16:
-            print "ignored", ','.join(row)
-            continue
-
-        dpt = row[2]
-        insee = row[2] + row[6]
-        resultat = row[14].strip()
-
-        if not insee in communes:
-            communes[insee] = init_res()
-
-        if not resultat + "_2005" in communes[insee]:
-            communes[insee][resultat + "_2005"] = 0
-
-        communes[insee][resultat + "_2005"] = communes[insee][resultat + "_2005"] + int(row[15])
-
-        if resultat == "OUI":
-            communes[insee]["exprimes_2005"] = communes[insee]["exprimes_2005"] + int(row[13])
-            communes[insee]["votants_2005"] = communes[insee]["votants_2005"] + int(row[11])
-            communes[insee]["abstention_2005"] = communes[insee]["abstention_2005"] + int(row[12])
-
-election = '2012'
-
-with open('data/pres_2012.csv', 'rb') as csvfile:
-    reader = csv.reader(csvfile, delimiter=';', quotechar='|')
-    for row in reader:
-        if len(row) != 15:
-            print "ignored", ','.join(row)
-            continue
-
-        if int(row[0]) != 1:
-            continue
-
-        dpt = row[1]
-        insee = row[1] + row[2]
-        resultat = row[13].strip()
-
-        if not insee in communes:
-            communes[insee] = init_res()
-
-        if not resultat + "_" + election in communes[insee]:
-            communes[insee][resultat + "_" + election] = 0
-
-        communes[insee][resultat + "_" + election] = communes[insee][resultat + "_" + election] + int(row[14])
-
-        if resultat == "HOLL":
-            communes[insee]["exprimes_" + election] = communes[insee]["exprimes_" + election] + int(row[9])
-            communes[insee]["votants_" + election] = communes[insee]["votants_" + election] + int(row[8])
-            communes[insee]["inscrits_" + election] = communes[insee]["inscrits_" + election] + int(row[7])
-
-election = '2007'
-
-with open('data/pres_2007.csv', 'rb') as csvfile:
-    reader = csv.reader(csvfile, delimiter=';', quotechar='|')
-    for row in reader:
-        if len(row) != 13:
-            print "ignored", ','.join(row)
-            continue
-
-        if int(row[0]) != 1:
-            continue
-
-        dpt = row[1]
-        insee = row[1] + row[2]
-        resultat = row[11].strip()
-
-        if not insee in communes:
-            communes[insee] = init_res()
-
-        if not resultat + "_" + election in communes[insee]:
-            communes[insee][resultat + "_" + election] = 0
-
-        communes[insee][resultat + "_" + election] = communes[insee][resultat + "_" + election] + int(row[12])
-
-        if resultat == "SARK":
-            communes[insee]["exprimes_" + election] = communes[insee]["exprimes_" + election] + int(row[7])
-            communes[insee]["votants_" + election] = communes[insee]["votants_" + election] + int(row[6])
-            communes[insee]["inscrits_" + election] = communes[insee]["inscrits_" + election] + int(row[5])
+    return stats, choix
 
 
-        #print insee, dpt
-for insee,commune in communes.iteritems():
-    if "OUI_2005" in communes[insee] and communes[insee]["exprimes_2005"] > 0:
-        communes[insee]["OUI_TCE"] = 100. * communes[insee]["OUI_2005"]/communes[insee]["exprimes_2005"]
-    else:
-        communes[insee]["OUI_TCE"] = 0
+# Pour 2005
 
-    communes[insee]["NON_TCE"] = 100-communes[insee]["OUI_TCE"]
+df_2005 = pd.read_csv(
+    'data/2005.csv',
+    sep=';',
+    skiprows=20,
+    encoding='cp1252',
+    names=['tour', 'region', 'departement', 'arrondissement', 'circo', 'canton', 'commune_code', 'ref_inscrits',
+           'commune_nom', 'bureau', 'inscrits', 'votants', 'abstentions', 'exprimes', 'choix', 'voix'],
+    dtype={'departement': str, 'commune_code': str, 'bureau': str}
+)
+# attention aux espaces en trop dans la réponse
+df_2005['choix'] = df_2005.choix.str.strip()
 
-    candidats_2012 = ["LEPE", "SARK", "CHEM", "BAYR", "ARTH", "POUT", "MELE", "DUPO", "HOLL", "JOLY"]
-    nonistes_droite = [ "LEPE", "DUPO" ]
-    nonistes_gauche = [ "MELE", "ARTH", "POUT"]
+stats_2005, choix_2005 = calculer(df_2005)
 
-    for c in candidats_2012:
-        if c + "_2012" in communes[insee] and communes[insee]["exprimes_2012"] > 0:
-            communes[insee][c + "_PRES_2012"] = 100. * communes[insee][c + "_2012"]/communes[insee]["exprimes_2012"]
-        else:
-            communes[insee][c + "_PRES_2012"] = 0
+# 2007 maintenant
 
-    communes[insee]["NONISTES_DROITE_PRES_2012"] = 0
-    for c in nonistes_droite:
-        communes[insee]["NONISTES_DROITE_PRES_2012"] = communes[insee]["NONISTES_DROITE_PRES_2012"] + communes[insee][c + "_PRES_2012"]
+df_2007 = pd.read_csv(
+    'data/pres_2007.csv',
+    sep=';',
+    skiprows=17,
+    encoding='cp1252',
+    names=['tour', 'departement', 'commune_code', 'commune_nom', 'bureau', 'inscrits', 'votants', 'exprimes',
+           'numero_candidat', 'nom_candidat', 'prenom_candidat', 'choix', 'voix'],
+    dtype={'departement': str, 'commune_code': str, 'bureau': str}
+)
 
-    communes[insee]["NONISTES_GAUCHE_PRES_2012"] = 0
-    for c in nonistes_gauche:
-        communes[insee]["NONISTES_GAUCHE_PRES_2012"] = communes[insee]["NONISTES_GAUCHE_PRES_2012"] + communes[insee][c + "_PRES_2012"]
+stats_2007, choix_2007 = calculer(df_2007)
 
-    communes[insee]["NONISTES_2012"] = communes[insee]["NONISTES_DROITE_PRES_2012"] + communes[insee]["NONISTES_GAUCHE_PRES_2012"]
+df_2012 = pd.read_csv(
+    'data/pres_2012.csv',
+    sep=';',
+    encoding='cp1252',
+    names=['tour', 'departement', 'commune_code', 'commune_nom', '?', '??', 'bureau', 'inscrits', 'votants', 'exprimes',
+           'numero_candidat', 'nom_candidat', 'prenom_candidat', 'choix', 'voix'],
+    dtype={'departement': str, 'commune_code': str, 'bureau': str}
+)
+stats_2012, choix_2012 = calculer(df_2012)
 
-    candidats_2007 = [ "BOVE", "BUFF", "SCHI", "LAGU", "VILL", "VOYN", "BESA", "BAYR", "ROYA", "NIHO", "LEPE", "SARK" ]
-    nonistes_droite = [ "LEPE", "NIHO", "VILL" ]
-    nonistes_gauche = [ "BUFF", "BESA", "SCHI" ]
+# statistiques tce
+scores_tce = pd.DataFrame({
+    'OUI_TCE': 100 * choix_2005[1]['OUI'] / stats_2005[1]['inscrits'],
+    'NON_TCE': 100 * choix_2005[1]['NON'] / stats_2005[1]['inscrits']
+})
+# statistiques 2012
+nonistes_droite_2012 = ["LEPE", "DUPO"]
+nonistes_gauche_2012 = ["MELE", "ARTH", "POUT"]
+scores_pres_2012 = 100 * choix_2012[1].divide(stats_2012[1]['inscrits'], axis=0)
+scores_pres_2012['NONISTES_DROITE'] = scores_pres_2012[nonistes_droite_2012].sum(axis=1)
+scores_pres_2012['NONISTES_GAUCHE'] = scores_pres_2012[nonistes_gauche_2012].sum(axis=1)
+scores_pres_2012['NONISTES'] = scores_pres_2012['NONISTES_DROITE'] + scores_pres_2012['NONISTES_GAUCHE']
 
-    for c in candidats_2007:
-        if c + "_2007" in communes[insee] and communes[insee]["exprimes_2007"] > 0:
-            communes[insee][c + "_PRES_2007"] = 100. * communes[insee][c + "_2007"]/communes[insee]["exprimes_2007"]
-        else:
-            communes[insee][c + "_PRES_2007"] = 0
+# statistiques 2007
+nonistes_droite_2007 = ["LEPE", "NIHO", "VILL"]
+nonistes_gauche_2007 = ["BUFF", "BESA", "SCHI"]
+scores_pres_2007 = 100 * choix_2007[1].divide(stats_2007[1]['inscrits'], axis=0)
+scores_pres_2007['NONISTES_DROITE'] = scores_pres_2007[nonistes_droite_2007].sum(axis=1)
+scores_pres_2007['NONISTES_GAUCHE'] = scores_pres_2007[nonistes_gauche_2007].sum(axis=1)
+scores_pres_2007['NONISTES'] = scores_pres_2007['NONISTES_DROITE'] + scores_pres_2007['NONISTES_GAUCHE']
 
-    communes[insee]["NONISTES_DROITE_PRES_2007"] = 0
-    for c in nonistes_droite:
-        communes[insee]["NONISTES_DROITE_PRES_2007"] = communes[insee]["NONISTES_DROITE_PRES_2007"] + communes[insee][c + "_PRES_2007"]
+df_communes = pd.concat([
+    scores_tce,
+    scores_pres_2012.rename(columns=lambda c: c + '_PRES_2012'),
+    scores_pres_2007.rename(columns=lambda c: c + '_PRES_2007')
+], axis=1)
 
-    communes[insee]["NONISTES_GAUCHE_PRES_2007"] = 0
-    for c in nonistes_gauche:
-        communes[insee]["NONISTES_GAUCHE_PRES_2007"] = communes[insee]["NONISTES_GAUCHE_PRES_2007"] + communes[insee][c + "_PRES_2007"]
-
-    communes[insee]["NONISTES_2007"] = communes[insee]["NONISTES_DROITE_PRES_2007"] + communes[insee]["NONISTES_GAUCHE_PRES_2007"]
-
-    for k, v in communes[insee].items():
-        if not type(v) is float:
-            del communes[insee][k]
+# a améliorer, on pourrait sortir directement du XML par exemple
+communes = {dep+commune: scores[scores.notnull()].to_dict() for (dep, commune), scores in df_communes.iterrows()}
 
 open("communes.json", 'w').write(json.dumps(communes, indent=4))
