@@ -9,17 +9,13 @@ from json import encoder
 
 encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 
-def attribuer_circo(df_source, df):
-    
-    return df
-
 
 def calculer_totaux(df):
-    stats_index = ['departement', 'circo', 'circo_code', 'tour' ]
+    stats_index = ['departement', 'circo', 'tour']
     choix_index = stats_index + ['choix']
 
     # on vérifie que le nombre d'inscrits, votants et exprimes est le même à chaque ligne d'un même bureau
-    verif_unique = df.groupby(stats_index + ['bureau']).agg({
+    verif_unique = df.groupby(stats_index + ['commune_code', 'bureau']).agg({
         'inscrits': 'nunique',
         'votants': 'nunique',
         'exprimes': 'nunique',
@@ -30,7 +26,7 @@ def calculer_totaux(df):
         df
             # on a vérifié que les stats étaient les mêmes pour chaque bureau, donc on déduplique en prenant
             # la première valeur
-            .groupby(stats_index + ['bureau']).agg({
+            .groupby(stats_index + ['commune_code', 'bureau']).agg({
             'inscrits': 'first',
             'votants': 'first',
             'exprimes': 'first',
@@ -70,78 +66,36 @@ def calculer_scores(stats, choix, gauche, droite, nonistes_gauche, nonistes_droi
 
 
 use_columns = [
-    'tour', 'departement', 'commune_code', 'bureau',
+    'tour', 'departement', 'circo', 'commune_code', 'bureau',
     'inscrits', 'votants', 'exprimes',
     'choix', 'voix'
 ]
 
 
-# Pour 2005
-
-df_2005 = pd.read_csv(
-    'data/2005.csv',
-    sep=';',
-    skiprows=20,
-    encoding='cp1252',
-    names=['tour', 'region', 'departement', 'arrondissement', 'circo', 'canton', 'commune_code', 'ref_inscrits',
-           'commune_nom', 'bureau', 'inscrits', 'votants', 'abstentions', 'exprimes', 'choix', 'voix'],
-    dtype={'departement': str, 'commune_code': str, 'bureau': str, 'circo': str},
-    usecols=use_columns
-)
-# attention aux espaces en trop dans la réponse
-df_2005['choix'] = df_2005.choix.str.strip()
-df_2005['circo_code'] = df_2005.departement+"_"+df_2005.circo
-
-# 2007 maintenant
-
-df_2007 = pd.read_csv(
-    'data/pres_2007.csv',
-    sep=';',
-    skiprows=17,
-    encoding='cp1252',
-    names=['tour', 'departement', 'commune_code', 'commune_nom', 'bureau', 'inscrits', 'votants', 'exprimes',
-           'numero_candidat', 'nom_candidat', 'prenom_candidat', 'choix', 'voix'],
-    dtype={'departement': str, 'commune_code': str, 'bureau': str},
-    usecols=use_columns
-)
-
-df_2007 = attribuer_circo(df_2005, df_2007)
-
 df_pres_2012 = pd.read_csv(
     'data/pres_2012.csv',
     sep=';',
     encoding='cp1252',
-    names=['tour', 'departement', 'commune_code', 'commune_nom', '?', '??', 'bureau', 'inscrits', 'votants', 'exprimes',
+    names=['tour', 'departement', 'commune_code', 'commune_nom', 'circo', 'canton', 'bureau', 'inscrits', 'votants', 'exprimes',
            'numero_candidat', 'nom_candidat', 'prenom_candidat', 'choix', 'voix'],
     dtype={'departement': str, 'commune_code': str, 'bureau': str},
     usecols=use_columns
 )
-
 
 
 df_legi_2012 = pd.read_csv(
     'data/legi_2012.csv',
     sep=';',
     skiprows=18,
-    names=['tour', 'departement', 'commune_code', 'commune_nom', 'circo', '??', 'bureau', 'inscrits', 'votants', 'exprimes',
+    names=['tour', 'departement', 'commune_code', 'commune_nom', 'circo', 'canton', 'bureau', 'inscrits', 'votants', 'exprimes',
            'numero_candidat', 'nom_candidat', 'prenom_candidat', 'choix', 'voix'],
     dtype={'departement': str, 'commune_code': str, 'bureau': str},
     usecols=use_columns
 )
 
-df_pres_2012 = attribuer_circo(df_legi_2012, df_pres_2012)
-
-stats_2005, choix_2005 = calculer_totaux(df_2005)
-stats_2007, choix_2007 = calculer_totaux(df_2007)
 stats_2012, choix_2012 = calculer_totaux(df_pres_2012)
 stats_legi_2012, choix_legi_2012 = calculer_totaux(df_legi_2012)
 
-# statistiques tce
-scores_tce = pd.DataFrame({
-    'OUI_TCE': 100 * choix_2005[1]['OUI'] / stats_2005[1]['inscrits'],
-    'NON_TCE': 100 * choix_2005[1]['NON'] / stats_2005[1]['inscrits'],
-    'ABSTENTION_TCE': 100-100 * stats_2005[1]['exprimes'] / stats_2005[1]['inscrits']
-})
 
 # statistiques présidentielles 2012
 
@@ -152,15 +106,6 @@ nonistes_gauche_2012 = ["MELE", "ARTH", "POUT"]
 scores_pres_2012 = calculer_scores(stats_2012, choix_2012,
                                    droite=droite_2012, gauche=gauche_2012,
                                    nonistes_droite=nonistes_droite_2012, nonistes_gauche=nonistes_gauche_2012)
-
-# statistiques présidentielles 2007
-droite_2007 = [ "LEPE", "SARK", "NIHO", "VILL" ]
-gauche_2007 = [ "BUFF", "BESA", "SCHI", "ROYA" ]
-nonistes_droite_2007 = ["LEPE", "NIHO", "VILL"]
-nonistes_gauche_2007 = ["BUFF", "BESA", "SCHI"]
-scores_pres_2007 = calculer_scores(stats_2007, choix_2007,
-                                   droite=droite_2007, gauche=gauche_2007,
-                                   nonistes_droite=nonistes_droite_2007, nonistes_gauche=nonistes_gauche_2007)
 
 
 # statistiques législatives 2012
@@ -177,21 +122,13 @@ scores_legi_2012 = calculer_scores(stats_legi_2012, choix_legi_2012,
                                    nonistes_gauche=nonistes_gauche_legislatives_2012)
 
 
-index = pd.DataFrame({
-    'dpt': stats_legi_2012['departement']
-})
-
-
 df_circonscriptions = pd.concat([
-    scores_tce,
     scores_pres_2012.rename(columns=lambda c: c + '_PRES_2012'),
-    scores_pres_2007.rename(columns=lambda c: c + '_PRES_2007'),
     scores_legi_2012.rename(columns=lambda c: c + '_LEGI_2012')
 ], axis=1)
 
-print (scores_tce)
 
 # a améliorer, on pourrait sortir directement du XML par exemple
-circonscriptions = {dep+circo_code: scores[scores.notnull()].to_dict() for (dep, circo_code), scores in df_circonscriptions.iterrows()}
+circonscriptions = {dep+'{:02d}'.format(circo): scores[scores.notnull()].to_dict() for (dep, circo), scores in df_circonscriptions.iterrows()}
 
-open("circonscriptions.json", 'w').write(json.dumps(circonscriptions, indent=4))
+open("circos.json", 'w').write(json.dumps(circonscriptions, indent=4))
