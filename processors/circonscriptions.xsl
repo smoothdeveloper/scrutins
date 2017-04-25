@@ -19,12 +19,8 @@
     \setsvg{svgpath = ../images/}
     
     
-    \title{\bf Histoire de la cosmologie \\
-    \ \\
-    \large Du développement de la Relativité Générale à la mission Planck
-    \\
-    \textit{(en cours d'écriture)}}    % Supply information
-    \author{Lucas Gautheron}              %   for the title page.
+    \title{\bf Revue des circonscriptions}    % Supply information
+    \author{}              %   for the title page.
     \date{\today}                           %   Use current date. 
     
     % Note that book class by default is formatted to be printed back-to-back.
