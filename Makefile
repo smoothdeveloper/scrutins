@@ -21,11 +21,17 @@ PROCESSORS := $(wildcard processors/*.xsl)
 SVG_FILES := $(PROCESSORS:processors/%.xsl=output/%.svg)
 PNG_FILES := $(SVG_FILES:.svg=.png)
 
-.PHONY: maps download
+.PHONY: maps download circonscriptions
 
-all: download maps circos.json
+all: download maps circonscriptions
 
 maps: output/non_2005.png output/hollande.png
+
+circonscriptions: circos.xml
+	saxonb-xslt -s:circos.xml -xsl:processors/circonscriptions.xsl -o:circonscriptions/document.tex -ext:on; \
+	cd circonscriptions && pdflatex --shell-escape -interaction=nonstopmode document.tex && \
+	pdflatex --shell-escape -interaction=nonstopmode document.tex
+
 
 $(PNG_FILES) $(SVG_FILES): | output
 
@@ -42,10 +48,13 @@ communes.xml: communes.json
 	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
 
 communes.json: $(DATA_FILES)
-	python get_election_data.py
+	python3 get_election_data.py
+
+circos.xml: circos.json
+	basex -q "let \$$file := \"circos.json\" return json-to-xml(file:read-text(\$$file))" > circos.xml
 
 circos.json: data/pres_2012.csv data/legi_2012.csv
-	python get_circo.py
+	python3 get_circo.py
 
 $(DATA_FILES): | data
 
@@ -70,4 +79,4 @@ download:
 	done
 
 clean:
-	rm -f communes.xml communes.json $(RAW_FILES) $(DATA_FILES) $(SVG_FILES) $(PNG_FILES)
+	rm -f communes.* circos.* $(RAW_FILES) $(DATA_FILES) $(SVG_FILES) $(PNG_FILES)

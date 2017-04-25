@@ -155,7 +155,6 @@ scores_legi_2012 = calculer_scores(stats_legi_2012, choix_legi_2012,
 
 
 df_communes = pd.concat([
-    scores_tce,
     scores_pres_2012.rename(columns=lambda c: c + '_PRES_2012'),
     scores_pres_2007.rename(columns=lambda c: c + '_PRES_2007'),
     scores_legi_2012.rename(columns=lambda c: c + '_LEGI_2012')

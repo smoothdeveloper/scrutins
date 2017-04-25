@@ -55,6 +55,7 @@ def calculer_totaux(df):
 
 def calculer_scores(stats, choix, gauche, droite, nonistes_gauche, nonistes_droite):
     scores = 100 * choix[1].divide(stats[1]['inscrits'], axis=0)
+    print (stats)
     scores['DROITE'] = scores[droite].sum(axis=1)
     scores['GAUCHE'] = scores[gauche].sum(axis=1)
     scores['NONISTES_DROITE'] = scores[nonistes_droite].sum(axis=1)
