@@ -42,7 +42,7 @@ communes.xml: communes.json
 	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
 
 communes.json: $(DATA_FILES)
-	python get_election_data.py
+	python get_circo.py
 
 $(DATA_FILES): | data
 

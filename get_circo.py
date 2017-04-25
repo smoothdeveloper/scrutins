@@ -15,7 +15,7 @@ def attribuer_circo(df_source, df):
 
 
 def calculer_totaux(df):
-    stats_index = ['departement', 'circo_code', 'tour' ]
+    stats_index = ['departement', 'circo', 'circo_code', 'tour' ]
     choix_index = stats_index + ['choix']
 
     # on vérifie que le nombre d'inscrits, votants et exprimes est le même à chaque ligne d'un même bureau
@@ -85,7 +85,7 @@ df_2005 = pd.read_csv(
     encoding='cp1252',
     names=['tour', 'region', 'departement', 'arrondissement', 'circo', 'canton', 'commune_code', 'ref_inscrits',
            'commune_nom', 'bureau', 'inscrits', 'votants', 'abstentions', 'exprimes', 'choix', 'voix'],
-    dtype={'departement': str, 'commune_code': str, 'bureau': str},
+    dtype={'departement': str, 'commune_code': str, 'bureau': str, 'circo': str},
     usecols=use_columns
 )
 # attention aux espaces en trop dans la réponse
