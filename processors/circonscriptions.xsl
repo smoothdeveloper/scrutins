@@ -48,7 +48,7 @@
           \hline
          <xsl:for-each select="./fn:number[ends-with(./@key, 'PRES_2012') and string-length(./@key)=14]">
              <xsl:sort data-type="number" order="descending" select="."/>
-            <xsl:value-of select="substring(./@key, 1, 4)" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+            <xsl:value-of select="substring-before(./@key, '_PRES_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
           </xsl:for-each>
           \hline
           \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_PRES_2012'],'#.##')" /> \% \\
@@ -60,10 +60,10 @@
           \hline
           \textbf{Nuance} &amp; \textbf{Score} \\
           \hline
-         <xsl:for-each select="./fn:number[ends-with(./@key, 'LEGI_2012') and string-length(./@key)=13]">
+         <xsl:for-each select="./fn:number[ends-with(./@key, 'LEGI_2012') and string-length(./@key) &lt;= 14]">
              <xsl:sort data-type="number" order="descending" select="."/>
             <xsl:if test=". &gt; 0">
-              <xsl:value-of select="substring(./@key, 1, 4)" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+              <xsl:value-of select="substring-before(./@key, '_LEGI_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
             </xsl:if>
           </xsl:for-each>
           \hline
