@@ -105,6 +105,8 @@ df_2007 = pd.read_csv(
     usecols=use_columns
 )
 
+df_2007 = attribuer_circo(df_2005, df_2007)
+
 df_pres_2012 = pd.read_csv(
     'data/pres_2012.csv',
     sep=';',
@@ -126,6 +128,8 @@ df_legi_2012 = pd.read_csv(
     dtype={'departement': str, 'commune_code': str, 'bureau': str},
     usecols=use_columns
 )
+
+df_pres_2012 = attribuer_circo(df_legi_2012, df_pres_2012)
 
 stats_2005, choix_2005 = calculer_totaux(df_2005)
 stats_2007, choix_2007 = calculer_totaux(df_2007)
