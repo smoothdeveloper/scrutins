@@ -10,12 +10,11 @@ from json import encoder
 encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 
 def attribuer_circo(df_source, df):
-    
     return df
 
 
 def calculer_totaux(df):
-    stats_index = ['departement', 'circo', 'circo_code', 'tour' ]
+    stats_index = ['departement', 'circo_code', 'tour' ]
     choix_index = stats_index + ['choix']
 
     # on vérifie que le nombre d'inscrits, votants et exprimes est le même à chaque ligne d'un même bureau
@@ -75,6 +74,7 @@ use_columns = [
     'choix', 'voix'
 ]
 
+use_columns_circo = use_columns + ['circo']
 
 # Pour 2005
 
@@ -86,7 +86,7 @@ df_2005 = pd.read_csv(
     names=['tour', 'region', 'departement', 'arrondissement', 'circo', 'canton', 'commune_code', 'ref_inscrits',
            'commune_nom', 'bureau', 'inscrits', 'votants', 'abstentions', 'exprimes', 'choix', 'voix'],
     dtype={'departement': str, 'circo': str, 'commune_code': str, 'bureau': str},
-    usecols=use_columns
+    usecols=use_columns_circo
 )
 # attention aux espaces en trop dans la réponse
 df_2005['choix'] = df_2005.choix.str.strip()
