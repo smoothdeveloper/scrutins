@@ -7,10 +7,6 @@ python:
   - 3.5
   - 2.7
 
-cache:
-  apt: true
-  pip: true
-
 addons:
   apt:
     packages:
@@ -26,6 +22,8 @@ install:
 script:  make maps && cp communes.json output/ && tar czvf output.tar.gz output
 
 cache:
+  apt: true
+  pip: true
   directories:
     - $PWD/data
 
