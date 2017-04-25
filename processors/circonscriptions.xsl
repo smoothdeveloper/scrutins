@@ -54,6 +54,22 @@
           \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_PRES_2012'],'#.##')" /> \% \\
           \hline
         \end{tabular}
+
+        \subsubsection*{Législatives 2012}
+        \begin{tabular}{|l|r|}
+          \hline
+          \textbf{Nuance} &amp; \textbf{Score} \\
+          \hline
+         <xsl:for-each select="./fn:number[ends-with(./@key, 'LEGI_2012') and string-length(./@key)=13]">
+             <xsl:sort data-type="number" order="descending" select="."/>
+            <xsl:if test=". &gt; 0">
+              <xsl:value-of select="substring(./@key, 1, 4)" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+            </xsl:if>
+          </xsl:for-each>
+          \hline
+          \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_LEGI_2012'],'#.##')" /> \% \\
+          \hline
+        \end{tabular}
         
     </xsl:for-each>
     
