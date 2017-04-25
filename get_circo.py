@@ -85,7 +85,7 @@ df_2005 = pd.read_csv(
     encoding='cp1252',
     names=['tour', 'region', 'departement', 'arrondissement', 'circo', 'canton', 'commune_code', 'ref_inscrits',
            'commune_nom', 'bureau', 'inscrits', 'votants', 'abstentions', 'exprimes', 'choix', 'voix'],
-    dtype={'departement': str, 'commune_code': str, 'bureau': str, 'circo': str},
+    dtype={'departement': str, 'circo': str, 'commune_code': str, 'bureau': str},
     usecols=use_columns
 )
 # attention aux espaces en trop dans la réponse
