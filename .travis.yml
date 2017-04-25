@@ -25,6 +25,7 @@ cache:
   apt: true
   pip: true
   directories:
+    - $PWD/raw
     - $PWD/data
 
 deploy:
