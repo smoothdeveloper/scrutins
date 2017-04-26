@@ -25,7 +25,7 @@
     
     \raggedbottom
 
-    \title{\bf Revue des circonscriptions}    % Supply information
+    \title{\bf Revue des circonscriptions (WIP)}    % Supply information
     \author{}              %   for the title page.
     \date{\today}                           %   Use current date. 
     
@@ -35,15 +35,12 @@
     \maketitle  
     % Print title page.
     
-    \chapter*{Introduction}
-    
-    
-   Blabalh
-    
+    \abstract{Ce document établit une revue de chaque circonscription, incluant des résultats électoraux (présidentielles de 2012 et 2017, législative de 2012), les groupes d'appui principaux qui s'y trouvent, et d'autres caractéristiques. Pour chaque circonscription, une estimation du nombre d'appels téléphoniques nécessaires et du coût induit pour atteindre 1\% d'inscrits \textit{et} susceptibles de voter pour LFI est donnée. Une analyse des trajectoires de vote entre les présidentielles de 2012 et 2017 sera proposée.}    
+
     \tableofcontents                        % Print table of contents
    
     <xsl:variable name="avgcallcost" select="0.05" />
-    <xsl:variable name="poptarget" select="0.1" />
+    <xsl:variable name="poptarget" select="0.01" />
     <xsl:variable name="canvote" select="0.72307692307" />
     <xsl:variable name="pplperhouse" select="0.59161702127" />
     <xsl:variable name="failrate" select="0.125" />
@@ -59,7 +56,7 @@
        
         \textbf{Nombre d'inscrits} (2012) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'])" />
 
-        \textbf{Estimation Mélenphone} (10\% des inscrits) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $avgcallcost * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> euros /  <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> appels
+        \textbf{Estimation Mélenphone} (1\% des inscrits) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $avgcallcost * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> euros /  <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> appels
 
         \textbf{Nombre de groupes d'appui} : <xsl:value-of select="count(document('../groupes.xml')/groupes/item/circo[text()=$circo])" />
     
