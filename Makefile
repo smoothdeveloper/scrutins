@@ -27,7 +27,7 @@ all: download maps circonscriptions
 
 maps: output/non_2005.png output/hollande.png
 
-circonscriptions: circos.xml
+circonscriptions: circos.xml groupes.xml
 	saxonb-xslt -s:circos.xml -xsl:processors/circonscriptions.xsl -o:circonscriptions/document.tex -ext:on; \
 	cd circonscriptions && pdflatex --shell-escape -interaction=nonstopmode document.tex && \
 	pdflatex --shell-escape -interaction=nonstopmode document.tex
@@ -43,6 +43,9 @@ $(SVG_FILES): output/%.svg: processors/%.xsl maps/communes.svg communes.xml
 
 output:
 	mkdir output
+
+groupes.xml:
+	python groupes_circos.py
 
 communes.xml: communes.json
 	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml

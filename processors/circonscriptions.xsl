@@ -23,7 +23,8 @@
       \definecolor{<xsl:value-of select="." />}{HTML}{<xsl:value-of select="upper-case(./@color)" />}
     </xsl:for-each>
     
-    
+    \raggedbottom
+
     \title{\bf Revue des circonscriptions}    % Supply information
     \author{}              %   for the title page.
     \date{\today}                           %   Use current date. 
@@ -45,7 +46,7 @@
     <xsl:variable name="poptarget" select="0.1" />
     <xsl:variable name="canvote" select="0.72307692307" />
     <xsl:variable name="pplperhouse" select="0.59161702127" />
-    <xsl:variable name="failrate" select="0.1" />
+    <xsl:variable name="failrate" select="0.125" />
     
     <xsl:for-each select="//fn:map">
         <xsl:sort data-type="number" order="ascending" select="./@key"/>
@@ -111,6 +112,22 @@
           \end{subfigure}</xsl:if>
         \end{figure}
     
+        <xsl:if test="count(document('../groupes.xml')/groupes/item/circo[text()=$circo]) &gt; 0">
+          \subsubsection*{Groupes d'appui principaux}
+          \begin{tabularx}{0.45\textwidth}{|X|l|r|}
+          \hline
+           \textbf{Responsable} &amp; \textbf{contact} &amp; \textbf{Participants} \\
+           \hline
+          <xsl:for-each select="document('../groupes.xml')/groupes/item[./circo=$circo]">
+            <xsl:sort data-type="number" select="./participants" order="descending" />
+            <xsl:if test="not(position() &gt; 7)">
+            <xsl:value-of select="./name" /> &amp; <xsl:value-of select="./(contact[1])/email" /> &amp; <xsl:value-of select="./participants" /> \\
+            \hline
+            </xsl:if>
+          </xsl:for-each>
+          \hline
+          \end{tabularx}
+        </xsl:if>
     </xsl:for-each>
     
     
