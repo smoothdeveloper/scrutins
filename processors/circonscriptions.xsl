@@ -45,10 +45,11 @@
     <xsl:variable name="poptarget" select="0.1" />
     <xsl:variable name="canvote" select="0.72307692307" />
     <xsl:variable name="pplperhouse" select="0.59161702127" />
-    <xsl:variable name="failrate" select="0.125" />
+    <xsl:variable name="failrate" select="0.1" />
     
     <xsl:for-each select="//fn:map">
         <xsl:sort data-type="number" order="ascending" select="./@key"/>
+        <xsl:variable name="circo" select="./@key" />
         \section{Circonscription <xsl:value-of select="substring(./@key, 1, 2)" />-<xsl:value-of select="substring(./@key, 3, 2)" />}
 
         \textbf{Département} : <xsl:value-of select="substring(./@key, 1, 2)" />
@@ -57,7 +58,9 @@
        
         \textbf{Nombre d'inscrits} (2012) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'])" />
 
-        \textbf{Estimation coût Mélenphone} : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $avgcallcost * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> euros
+        \textbf{Estimation Mélenphone} (10\% des inscrits) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $avgcallcost * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> euros /  <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> appels
+
+        \textbf{Nombre de groupes d'appui} : <xsl:value-of select="count(document('../groupes.xml')/groupes/item/circo[text()=$circo])" />
     
         \subsubsection*{Présidentielle 2012}
         \begin{tabular}{|c|l|r|}

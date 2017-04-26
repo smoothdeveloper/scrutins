@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<nuances>
+  <nuance color="ff8080">HOLL</nuance>
+  <nuance color="c0c0c0">LEPE</nuance>
+  <nuance color="dd0000">MELE</nuance>
+  <nuance color="0066cc">SARK</nuance>
+  <nuance color="ff9900">BAYR</nuance>
+  <nuance color="bb0000">ARTH</nuance>
+  <nuance color="bb0000">POUT</nuance>
+  <nuance color="f0f0f0">CHEM</nuance>
+  <nuance color="00c000">JOLY</nuance>
+  <nuance color="003399">DUPO</nuance>
+
+  <nuance color="ff8080">PS</nuance>
+  <nuance color="ff8080">SOC</nuance>
+  <nuance color="00c000">VEC</nuance>
+  <nuance color="ffc0c0">DVG</nuance>
+  <nuance color="ffd1dc">PRG</nuance>
+  <nuance color="ffd1dc">RDG</nuance>
+  <nuance color="0066cc">UMP</nuance>
+  <nuance color="acbffb">DVD</nuance>
+  <nuance color="00d9d9">NCE</nuance>
+  <nuance color="003399">PRV</nuance>
+  <nuance color="0066cc">ALLI</nuance>
+  <nuance color="c0c0c0">FN</nuance>
+  <nuance color="dd0000">FG</nuance>
+  <nuance color="ff9900">CEN</nuance>
+  <nuance color="bb0000">EXG</nuance>
+  <nuance color="77ff77">ECO</nuance>
+  <nuance color="ffcc33">REG</nuance>
+  <nuance color="f0f0f0">AUT</nuance>
+  <nuance color="404040">EXD</nuance>
+</nuances>
