@@ -42,8 +42,13 @@
     \tableofcontents                        % Print table of contents
     
     <xsl:for-each select="//fn:map">
-        \section{Circonscription n.<xsl:value-of select="./@key" />}
+        <xsl:sort data-type="number" order="ascending" select="./@key"/>
+        \section{Circonscription <xsl:value-of select="substring(./@key, 1, 2)" />-<xsl:value-of select="substring(./@key, 3, 2)" />}
+
+        \textbf{Département} : <xsl:value-of select="substring(./@key, 1, 2)" />
         
+        \textbf{Circonscription} : <xsl:value-of select="substring(./@key, 3, 2)" />
+       
         \textbf{Nombre d'inscrits} (2012) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'])" />
     
         \subsubsection*{Présidentielle 2012}
@@ -61,7 +66,7 @@
         \end{tabular}
 
         \subsubsection*{Législatives 2012}
-        \begin{figure}[hptb]
+        \begin{figure}[H]
           \begin{subfigure}[t]{.225\textwidth}
             \begin{tabular}{|c|l|r|}
             \hline
