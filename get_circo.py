@@ -54,6 +54,7 @@ def calculer_totaux(df):
 
 
 def calculer_scores(stats, choix, tour, gauche, droite, nonistes_gauche, nonistes_droite):
+    print(choix)
     scores = 100 * choix[tour].divide(stats[tour]['exprimes'], axis=0)
     if gauche and droite and nonistes_gauche and nonistes_droite:
         scores['DROITE'] = scores[droite].sum(axis=tour)
@@ -91,7 +92,7 @@ df_legi_2012 = pd.read_csv(
     skiprows=18,
     names=['tour', 'departement', 'commune_code', 'commune_nom', 'circo', 'canton', 'bureau', 'inscrits', 'votants', 'exprimes',
            'numero_candidat', 'nom_candidat', 'prenom_candidat', 'choix', 'voix'],
-    dtype={'departement': str, 'commune_code': str, 'bureau': str},
+    dtype={'departement': str, 'choix': str, 'commune_code': str, 'bureau': str},
     usecols=use_columns
 )
 
