@@ -17,6 +17,11 @@
     \usepackage{import}
     \subimport{.}{header}
     \setsvg{svgpath = ../images/}
+
+    <xsl:variable name="nuances" select="document('../circonscriptions/nuances.xml')" />
+    <xsl:for-each select="$nuances//nuance">
+      \definecolor{<xsl:value-of select="." />}{HTML}{<xsl:value-of select="upper-case(./@color)" />}
+    </xsl:for-each>
     
     
     \title{\bf Revue des circonscriptions}    % Supply information
@@ -42,32 +47,47 @@
         \textbf{Nombre d'inscrits} (2012) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'])" />
     
         \subsubsection*{Présidentielle 2012}
-        \begin{tabular}{|l|r|}
+        \begin{tabular}{|c|l|r|}
           \hline
-          \textbf{Candidat} &amp; \textbf{Score} \\
+          \hphantom &amp; \textbf{Candidat} &amp; \textbf{Score} \\
           \hline
          <xsl:for-each select="./fn:number[ends-with(./@key, 'PRES_2012') and string-length(./@key)=14]">
              <xsl:sort data-type="number" order="descending" select="."/>
-            <xsl:value-of select="substring-before(./@key, '_PRES_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+            \cellcolor{<xsl:value-of select="substring-before(./@key, '_PRES_2012')" />} \hphantom &amp; <xsl:value-of select="substring-before(./@key, '_PRES_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
           </xsl:for-each>
           \hline
-          \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_PRES_2012'],'#.##')" /> \% \\
+          \hphantom &amp; \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_PRES_2012'],'#.##')" /> \% \\
           \hline
         \end{tabular}
 
         \subsubsection*{Législatives 2012}
-        \begin{tabular}{|l|r|}
+        \begin{tabular}{|c|l|r|}
           \hline
-          \textbf{Nuance} &amp; \textbf{Score} \\
+          \hphantom &amp; \textbf{Nuance} &amp; \textbf{Score} \\
           \hline
-         <xsl:for-each select="./fn:number[ends-with(./@key, 'LEGI_2012') and string-length(./@key) &lt;= 14]">
+         <xsl:for-each select="./fn:number[ends-with(./@key, 'LEGI1_2012') and string-length(./@key) &lt;= 15]">
              <xsl:sort data-type="number" order="descending" select="."/>
             <xsl:if test=". &gt; 0">
-              <xsl:value-of select="substring-before(./@key, '_LEGI_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+              \cellcolor{<xsl:value-of select="substring-before(./@key, '_LEGI1_2012')" />} \hphantom &amp; <xsl:value-of select="substring-before(./@key, '_LEGI1_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
             </xsl:if>
           </xsl:for-each>
           \hline
-          \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_LEGI_2012'],'#.##')" /> \% \\
+          \hphantom &amp; \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_LEGI1_2012'],'#.##')" /> \% \\
+          \hline
+        \end{tabular}
+
+        \begin{tabular}{|c|l|r|}
+          \hline
+          \hphantom &amp; \textbf{Nuance} &amp; \textbf{Score} \\
+          \hline
+         <xsl:for-each select="./fn:number[ends-with(./@key, 'LEGI2_2012') and string-length(./@key) &lt;= 15]">
+             <xsl:sort data-type="number" order="descending" select="."/>
+            <xsl:if test=". &gt; 0">
+              \cellcolor{<xsl:value-of select="substring-before(./@key, '_LEGI2_2012')" />} \hphantom &amp; <xsl:value-of select="substring-before(./@key, '_LEGI2_2012')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+            </xsl:if>
+          </xsl:for-each>
+          \hline
+          \hphantom &amp; \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_LEGI2_2012'],'#.##')" /> \% \\
           \hline
         \end{tabular}
         

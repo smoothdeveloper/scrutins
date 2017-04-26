@@ -53,16 +53,17 @@ def calculer_totaux(df):
     return stats, choix
 
 
-def calculer_scores(stats, choix, gauche, droite, nonistes_gauche, nonistes_droite):
-    scores = 100 * choix[1].divide(stats[1]['inscrits'], axis=0)
-    print (stats)
-    scores['DROITE'] = scores[droite].sum(axis=1)
-    scores['GAUCHE'] = scores[gauche].sum(axis=1)
-    scores['NONISTES_DROITE'] = scores[nonistes_droite].sum(axis=1)
-    scores['NONISTES_GAUCHE'] = scores[nonistes_gauche].sum(axis=1)
-    scores['NONISTES'] = scores['NONISTES_DROITE'] + scores['NONISTES_GAUCHE']
-    scores['ABSTENTION'] = 100-100 * stats[1]['exprimes'] / stats[1]['inscrits']
-    scores['INSCRITS'] = stats[1]['inscrits']
+def calculer_scores(stats, choix, tour, gauche, droite, nonistes_gauche, nonistes_droite):
+    scores = 100 * choix[tour].divide(stats[tour]['exprimes'], axis=0)
+    if gauche and droite and nonistes_gauche and nonistes_droite:
+        scores['DROITE'] = scores[droite].sum(axis=tour)
+        scores['GAUCHE'] = scores[gauche].sum(axis=tour)
+        scores['NONISTES_DROITE'] = scores[nonistes_droite].sum(axis=tour)
+        scores['NONISTES_GAUCHE'] = scores[nonistes_gauche].sum(axis=tour)
+        scores['NONISTES'] = scores['NONISTES_DROITE'] + scores['NONISTES_GAUCHE']
+
+    scores['ABSTENTION'] = 100-100 * stats[tour]['exprimes'] / stats[tour]['inscrits']
+    scores['INSCRITS'] = stats[tour]['inscrits']
     return scores
 
 
@@ -104,7 +105,7 @@ droite_2012 = [ "LEPE", "DUPO", "SARK" ]
 gauche_2012 = [ "MELE", "ARTH", "POUT" ]
 nonistes_droite_2012 = ["LEPE", "DUPO"]
 nonistes_gauche_2012 = ["MELE", "ARTH", "POUT"]
-scores_pres_2012 = calculer_scores(stats_2012, choix_2012,
+scores_pres_2012 = calculer_scores(stats_2012, choix_2012, 1,
                                    droite=droite_2012, gauche=gauche_2012,
                                    nonistes_droite=nonistes_droite_2012, nonistes_gauche=nonistes_gauche_2012)
 
@@ -116,16 +117,23 @@ droite_legislatives_2012 = [ 'FN', 'EXD', 'DVD', 'UMP' ]
 gauche_legislatives_2012 = [ 'FG', 'EXG', 'DVG', 'SOC' ]
 nonistes_droite_legislatives_2012 = ['FN', 'EXD']
 nonistes_gauche_legislatives_2012 = ['FG', 'EXG']
-scores_legi_2012 = calculer_scores(stats_legi_2012, choix_legi_2012,
+scores_legi1_2012 = calculer_scores(stats_legi_2012, choix_legi_2012, 1,
                                    droite=droite_legislatives_2012,
                                    gauche=gauche_legislatives_2012,
                                    nonistes_droite=nonistes_droite_legislatives_2012,
                                    nonistes_gauche=nonistes_gauche_legislatives_2012)
 
+scores_legi2_2012 = calculer_scores(stats_legi_2012, choix_legi_2012, 2,
+                                   droite=[],
+                                   gauche=[],
+                                   nonistes_droite=[],
+                                   nonistes_gauche=[])
+
 
 df_circonscriptions = pd.concat([
     scores_pres_2012.rename(columns=lambda c: c + '_PRES_2012'),
-    scores_legi_2012.rename(columns=lambda c: c + '_LEGI_2012')
+    scores_legi1_2012.rename(columns=lambda c: c + '_LEGI1_2012'),
+    scores_legi2_2012.rename(columns=lambda c: c + '_LEGI2_2012')
 ], axis=1)
 
 
