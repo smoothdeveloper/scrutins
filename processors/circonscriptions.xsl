@@ -40,6 +40,12 @@
    Blabalh
     
     \tableofcontents                        % Print table of contents
+   
+    <xsl:variable name="avgcallcost" select="0.05" />
+    <xsl:variable name="poptarget" select="0.1" />
+    <xsl:variable name="canvote" select="0.72307692307" />
+    <xsl:variable name="pplperhouse" select="0.59161702127" />
+    <xsl:variable name="failrate" select="0.125" />
     
     <xsl:for-each select="//fn:map">
         <xsl:sort data-type="number" order="ascending" select="./@key"/>
@@ -50,6 +56,8 @@
         \textbf{Circonscription} : <xsl:value-of select="substring(./@key, 3, 2)" />
        
         \textbf{Nombre d'inscrits} (2012) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'])" />
+
+        \textbf{Estimation coût Mélenphone} : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $avgcallcost * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> euros
     
         \subsubsection*{Présidentielle 2012}
         \begin{tabular}{|c|l|r|}
