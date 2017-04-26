@@ -48,13 +48,13 @@ communes.xml: communes.json
 	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
 
 communes.json: $(DATA_FILES)
-	python3 get_election_data.py
+	python get_election_data.py
 
 circos.xml: circos.json
 	basex -q "let \$$file := \"circos.json\" return json-to-xml(file:read-text(\$$file))" > circos.xml
 
 circos.json: data/pres_2012.csv data/legi_2012.csv
-	python3 get_circo.py
+	python get_circo.py
 
 $(DATA_FILES): | data
 
