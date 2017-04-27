@@ -13,6 +13,19 @@ addons:
     - libsaxonb-java
     - inkscape
     - default-jre
+    - texlive-base
+    - texlive-xetex
+    - texlive-latex-recommended
+    - texlive-latex-extra
+    - texlive-extra-utils
+    - texlive-fonts-recommended
+    - texlive-font-utils
+    - texlive-lang-french
+    - texlive-math-extra
+    - texlive-pictures
+    - latex-xcolor
+    - texlive-bibtex-extra
+
 
 install:
     - wget http://files.basex.org/releases/8.6.1/BaseX861.zip && unzip BaseX861.zip && rm BaseX861.zip
