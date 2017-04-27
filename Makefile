@@ -1,6 +1,3 @@
-#saxonb-xslt -s:maps/circonscriptions.svg -xsl:processors/circo.xsl -o:data/circo -ext:on
-#saxonb-xslt -s:maps/communes.svg -xsl:processors/communes.xsl -o:data/communes -ext:on
-
 SHELL=/bin/bash
 
 SOURCE_DIR := processors
@@ -22,7 +19,7 @@ PROCESSORS := $(wildcard processors/*.xsl)
 #SVG_FILES := $(PROCESSORS:processors/%.xsl=output/%.svg)
 #PNG_FILES := $(SVG_FILES:.svg=.png)
 
-.PHONY: maps download circonscriptions
+.PHONY: download circonscriptions
 
 all: download circonscriptions
 
