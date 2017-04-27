@@ -142,7 +142,7 @@
           <xsl:for-each select="document('../groupes.xml')/groupes/item[./circo=$circo]">
             <xsl:sort data-type="number" select="./participants" order="descending" />
             <xsl:if test="not(position() &gt; 7)">
-            <xsl:value-of select="./name" /> &amp; <xsl:value-of select="./(contact[1])/email" /> &amp; <xsl:value-of select="./participants" /> \\
+            <xsl:value-of select="./name" /> &amp; \verb/<xsl:value-of select="./(contact[1])/email" />/ &amp; <xsl:value-of select="./participants" /> \\
             \hline
             </xsl:if>
           </xsl:for-each>
