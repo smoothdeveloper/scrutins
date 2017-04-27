@@ -27,8 +27,8 @@ all: download circonscriptions
 
 circonscriptions: circos.xml groupes.xml
 	saxonb-xslt -s:circos.xml -xsl:processors/circonscriptions.xsl -o:circonscriptions/document.tex -ext:on; \
-	cd circonscriptions && pdflatex --shell-escape -interaction=nonstopmode document.tex && \
-	pdflatex --shell-escape -interaction=nonstopmode document.tex
+	cd circonscriptions && (pdflatex --shell-escape -interaction=nonstopmode document.tex || true) && \
+	(pdflatex --shell-escape -interaction=nonstopmode document.tex || true)
 
 
 #$(PNG_FILES) $(SVG_FILES): | output
