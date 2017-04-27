@@ -19,14 +19,14 @@ RAW_FILES := $(addprefix raw/,$(FILES))
 DATA_FILES := $(addprefix data/,$(FILES))
 
 PROCESSORS := $(wildcard processors/*.xsl)
-SVG_FILES := $(PROCESSORS:processors/%.xsl=output/%.svg)
-PNG_FILES := $(SVG_FILES:.svg=.png)
+#SVG_FILES := $(PROCESSORS:processors/%.xsl=output/%.svg)
+#PNG_FILES := $(SVG_FILES:.svg=.png)
 
 .PHONY: maps download circonscriptions
 
-all: download maps circonscriptions
+all: download circonscriptions
 
-maps: output/non_2005.png output/hollande.png
+#maps: output/non_2005.png output/hollande.png
 
 circonscriptions: circos.xml groupes.xml
 	saxonb-xslt -s:circos.xml -xsl:processors/circonscriptions.xsl -o:circonscriptions/document.tex -ext:on; \
@@ -34,13 +34,13 @@ circonscriptions: circos.xml groupes.xml
 	pdflatex --shell-escape -interaction=nonstopmode document.tex
 
 
-$(PNG_FILES) $(SVG_FILES): | output
+#$(PNG_FILES) $(SVG_FILES): | output
 
-$(PNG_FILES): %.png: %.svg
-	inkscape -f $< -e "$@"
+#$(PNG_FILES): %.png: %.svg
+#	inkscape -f $< -e "$@"
 
-$(SVG_FILES): output/%.svg: processors/%.xsl maps/communes.svg communes.xml
-	saxonb-xslt -s:maps/communes.svg -xsl:$< -o:$@ -ext:on
+#$(SVG_FILES): output/%.svg: processors/%.xsl maps/communes.svg communes.xml
+#	saxonb-xslt -s:maps/communes.svg -xsl:$< -o:$@ -ext:on
 
 output:
 	mkdir output
