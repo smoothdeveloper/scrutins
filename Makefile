@@ -57,7 +57,7 @@ groupes.xml:
 circos.xml: circos.json
 	basex -q "let \$$file := \"circos.json\" return json-to-xml(file:read-text(\$$file))" > circos.xml
 
-circos.json: data/pres_2012.csv data/legi_2012.csv
+circos.json: data/pres_2012.csv data/legi_2012.csv data/pres_2017.csv
 	python get_circo.py
 
 $(DATA_FILES): | data
