@@ -96,8 +96,20 @@ df_legi_2012 = pd.read_csv(
     usecols=use_columns
 )
 
+df_pres_2017 = pd.read_csv(
+    'data/pres_2017.csv',
+    sep=';',
+    encoding='cp1252',
+    names=['tour', 'departement', 'lib_dpt', 'circo', 'lib_circo', 'commune_code', 'lib_commune', 'bureau', 'inscrits', 'abstentions', 'abs_ins',
+           'votants', 'vot_ins', 'blancs', 'bla_ins', 'bla_vot',
+           'nuls', 'nul_ins', 'nul_vot', 'exprimes', 'exp_ins', 'exp_vot', 'sexe', 'choix', 'prenom', 'voix', 'dummy1', 'dummy2', 'panneau'],
+    dtype={'departement': str, 'commune_code': str, 'bureau': str},
+    usecols=use_columns
+)
+
 stats_2012, choix_2012 = calculer_totaux(df_pres_2012)
 stats_legi_2012, choix_legi_2012 = calculer_totaux(df_legi_2012)
+stats_2017, choix_2017 = calculer_totaux(df_pres_2017)
 
 
 # statistiques présidentielles 2012
@@ -130,11 +142,18 @@ scores_legi2_2012 = calculer_scores(stats_legi_2012, choix_legi_2012, 2,
                                    nonistes_droite=[],
                                    nonistes_gauche=[])
 
+scores_pres_2017 = calculer_scores(stats_2017, choix_2017, 1,
+                                   droite=[],
+                                   gauche=[],
+                                   nonistes_droite=[],
+                                   nonistes_gauche=[])
+
 
 df_circonscriptions = pd.concat([
     scores_pres_2012.rename(columns=lambda c: c + '_PRES_2012'),
     scores_legi1_2012.rename(columns=lambda c: c + '_LEGI1_2012'),
-    scores_legi2_2012.rename(columns=lambda c: c + '_LEGI2_2012')
+    scores_legi2_2012.rename(columns=lambda c: c + '_LEGI2_2012'),
+    scores_pres_2017.rename(columns=lambda c: c + '_PRES_2017')
 ], axis=1)
 
 

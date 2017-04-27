@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <nuances>
   <nuance color="ff8080">HOLL</nuance>
+
   <nuance color="c0c0c0">LEPE</nuance>
+  <nuance color="c0c0c0">LE P</nuance>
+
   <nuance color="dd0000">MELE</nuance>
+  <nuance color="dd0000">MÉLE</nuance>
+
   <nuance color="0066cc">SARK</nuance>
   <nuance color="ff9900">BAYR</nuance>
   <nuance color="bb0000">ARTH</nuance>
@@ -10,6 +15,12 @@
   <nuance color="f0f0f0">CHEM</nuance>
   <nuance color="00c000">JOLY</nuance>
   <nuance color="003399">DUPO</nuance>
+
+  <nuance color="f0f0f0">ASSE</nuance>
+  <nuance color="ff9900">MACR</nuance>
+  <nuance color="0066cc">FILL</nuance>
+  <nuance color="ff8080">HAMO</nuance>
+  <nuance color="ffcc33">LASS</nuance>
 
   <nuance color="ff8080">PS</nuance>
   <nuance color="ff8080">SOC</nuance>

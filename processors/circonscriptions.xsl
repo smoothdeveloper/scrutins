@@ -56,11 +56,16 @@
        
         \textbf{Nombre d'inscrits} (2012) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'])" />
 
+        \textbf{Nombre d'inscrits} (2017) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2017'])" />
+
         \textbf{Estimation Mélenphone} (1\% des inscrits) : <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $avgcallcost * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> euros /  <xsl:value-of select="round(./fn:number[@key='INSCRITS_PRES_2012'] * $poptarget * $pplperhouse div $canvote div $failrate div 100) * 100" /> appels
 
         \textbf{Nombre de groupes d'appui} : <xsl:value-of select="count(document('../groupes.xml')/groupes/item/circo[text()=$circo])" />
     
-        \subsubsection*{Présidentielle 2012}
+        \subsubsection*{Présidentielles}
+
+        \begin{figure}[H]
+          \begin{subfigure}[t]{.225\textwidth}
         \begin{tabular}{|c|l|r|}
           \hline
           \hphantom &amp; \textbf{Candidat} &amp; \textbf{Score} \\
@@ -72,7 +77,26 @@
           \hline
           \hphantom &amp; \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_PRES_2012'],'#.##')" /> \% \\
           \hline
-        \end{tabular}
+            \end{tabular}
+            \caption{1er tour 2012}
+          \end{subfigure}%
+          \begin{subfigure}[t]{.225\textwidth}
+            \begin{tabular}{|c|l|r|}
+          \hline
+          \hphantom &amp; \textbf{Candidat} &amp; \textbf{Score} \\
+          \hline
+         <xsl:for-each select="./fn:number[ends-with(./@key, 'PRES_2017') and string-length(./@key)=14]">
+             <xsl:sort data-type="number" order="descending" select="."/>
+            \cellcolor{<xsl:value-of select="substring-before(./@key, '_PRES_2017')" />} \hphantom &amp; <xsl:value-of select="substring-before(./@key, '_PRES_2017')" /> &amp; <xsl:value-of select="format-number(.,'#.##')" /> \% \\
+          </xsl:for-each>
+          \hline
+          \hphantom &amp; \textbf{Abstention} &amp; <xsl:value-of select="format-number(./fn:number[@key='ABSTENTION_PRES_2017'],'#.##')" /> \% \\
+          \hline
+          \end{tabular}
+            \caption{1er tour 2017}
+            \label{fig:2}
+          \end{subfigure}
+        \end{figure}
 
         \subsubsection*{Législatives 2012}
         \begin{figure}[H]
