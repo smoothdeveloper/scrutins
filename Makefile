@@ -48,11 +48,11 @@ output:
 groupes.xml:
 	python groupes_circos.py
 
-communes.xml: communes.json
-	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
+#communes.xml: communes.json
+#	basex -q "let \$$file := \"communes.json\" return json-to-xml(file:read-text(\$$file))" > communes.xml
 
-communes.json: $(DATA_FILES)
-	python get_election_data.py
+#communes.json: $(DATA_FILES)
+#	python get_election_data.py
 
 circos.xml: circos.json
 	basex -q "let \$$file := \"circos.json\" return json-to-xml(file:read-text(\$$file))" > circos.xml
